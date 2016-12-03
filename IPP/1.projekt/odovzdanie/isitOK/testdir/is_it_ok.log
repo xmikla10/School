@@ -1,0 +1,40 @@
+Archive:  xmikla10-JSN.zip
+  inflating: jsn.php                 
+  inflating: JSN-doc.pdf             
+
+--help viz společné zadání všech úloh
+--input=filename zadaný vstupní JSON soubor v kódování UTF-8
+--output=filename textový výstupní XML soubor v kódování UTF-8 s obsahem převedeným
+ze vstupního souboru
+-h=subst ve jméně elementu odvozeném z dvojice jméno-hodnota nahraďte každý nepovolený
+znak ve jméně XML značky řetězcem subst. Implicitně (i při nezadaném parametru -h) uvažujte
+nahrazování znakem pomlčka (-). Vznikne-li po nahrazení invalidní jméno XML elementu,
+skončete s chybou a návratovým kódem 51.
+-n negenerovat XML hlavičku1 na výstup skriptu (vhodné například v případě kombinování
+více výsledků)
+-r=root-element jméno párového kořenového elementu obalujícího výsledek. Pokud nebude
+zadán, tak se výsledek neobaluje kořenovým elementem, ač to potenciálně porušuje validitu
+XML (skript neskončí s chybou). Zadání řetězce root-element vedoucího na nevalidní XML
+značku ukončí skript s chybou a návratovým kódem 50 (nevalidní znaky nenahrazujte).
+--array-name=array-element tento parametr umožní přejmenovat element obalující pole
+z implicitní hodnoty array na array-element. Zadání řetězce array-element vedoucího na
+nevalidní XML značku ukončí skript s chybou a návratovým kódem 50 (nevalidní znaky nenahrazujte).
+--item-name=item-element analogicky, tímto parametrem lze změnit jméno elementu pro
+prvky pole (implicitní hodnota je item). Zadání řetězce item-element vedoucího na nevalidní
+XML značku ukončí skript s chybou a návratovým kódem 50 (nevalidní znaky nenahrazujte).
+-s hodnoty (v dvojici i v poli) typu string budou transformovány na textové elementy místo
+atributů.
+-i hodnoty (v dvojici i v poli) typu number budou transformovány na textové elementy místo
+atributů.
+-l hodnoty literálů (true, false, null) budou transformovány na elementy <true/>,
+<false/> a <null/> místo na atributy.
+-c tento přepínač oproti implicitnímu chování aktivuje překlad problematických znaků. Pro
+XML problematické znaky s UTF-8 kódem menším jak 128 ve vstupních řetězcových hodnotách
+(ve dvojicích i polích) konvertujte na odpovídající zápisy v XML pomocí metaznaku & (např.
+&amp;, &lt;, &gt; atd.). Ostatní problematické znaky konvertovat nemusíte.
+-a, --array-size u pole bude doplněn atribut size s uvedením počtu prvků v tomto poli.
+-t, --index-items ke každému prvku pole bude přidán atribut index s určením indexu prvku v tomto poli (číslování začíná od 1, pokud není parametrem --start určeno jinak).
+--start=n inicializace inkrementálního čitače pro indexaci prvků pole (nutno kombinovat
+s parametrem --index-items, jinak chyba s návratovým kódem 1) na zadané kladné celé číslo
+n včetně nuly (implicitně n = 1).
+ is_it_ok.sh: riadok 222: dos2unix: príkaz nenájdený

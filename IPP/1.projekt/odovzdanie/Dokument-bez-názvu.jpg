@@ -1,0 +1,34 @@
+Dokumentace úlohy JSN: JSON2XML v PHP 5 do IPP 2015/2016
+Jméno a příjmení: Peter Miklánek
+Login: xmikla10
+
+
+Zadání:
+Mým úkolem bylo vytvořit skript v jazyce PHP 5, který provede konverzi vstupu ve formátu JSON do XML.  
+
+Implementace:
+Pro implementaci byl zvolen objektový návrh. V programu je implementována funkce main. Tato funkce řídí celý běh programu a volá si třídy, které budou zmíněny dále.
+
+Zpracováni argumentů:
+Zpracování argumentů příkazové řádky zajišťuje třída arg, která se stará o jejich načtení, validaci a zpřístupnění zbytku programu při jeho běhu.
+
+Metoda arguments provádí kontrolu opakované deklarace, nedovolené kombinace vstupních argumentů nebo nevalidních hodnot.
+
+Práce se soubory:
+Pro práci se soubory je vytvořena třída file. Tato třída obsahuje 2 metody: cteni a zapis. Při těchto metodách jsem využil funkce file_get_contents a file_put_contents, které mi usnadnily implementaci.
+
+Spracování vstupního (JSON) souboru:
+Pro zpracovaní vstupních dat ve formátu JSON je vytvořena třída json, která obsahuje metodu JSONdecode. Tato metoda používa funkci json_decode, které sebere JSON řetězec a převádí ho do PHP promněnné. Je zde přidána kontrola, protože json_decode pracuje jen s UTF-8.
+
+Generování výsledného XML dokumentu:
+Pro vytvoření výsledného XML dokumentu je implementována třída xml. Metody v této třídě zpravovávají pole a objekty. Prochází je po jednotlivých prvcích, které postupně zpracovává. Pokud je prvek další objekt nebo pole, provede rekurzivně vytvoření dalších podřazených instancí.
+ 
+V této tříde implementována metoda zapisDoXML, která za pomoci různých metod zpracuje a následně zapisuje výsledek do XML souboru.
+
+Ošetření názvu XML elementu zajišťuje metoda F_escape, která za pomoci regulárního výrazu provede nahrazení nepovolených znakú a následně zkontroluje validitu.
+
+Zpracování chyb :
+Pro zpracování chyb nebyla implementována žádná metoda, ale každá metoda při nalezení chyby sama ukončí program s odpovídajícim návratovým kódem.
+
+Závěr:
+Skript byl řádně otestován sadou testů přiložených k zadání projektu a s použitím programu JExamXML na porovnání testovacích výstupů s referenčními. Testování jsem prováděl na operačním systému GNU/LInux Ubuntu a také na referenčním školním serveru Merlin.

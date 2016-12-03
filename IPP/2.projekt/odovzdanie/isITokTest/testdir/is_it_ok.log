@@ -1,0 +1,23 @@
+Archive:  xmikla10-MKA.zip
+  inflating: MKA-doc.pdf             
+  inflating: mka.py                  
+ extracting: rozsireni               
+--help
+						pre vypisanie napovedy
+					--input=filename
+						zadany vstupny subor filename s popisom dobre specifikovaneho konecneho automatu
+					--output=filename
+						zadany vstupny subor filename s popisom vystledneho ekvivalentniho konecneho
+						automatu v predepsanem formatu vystupu
+					-f, --find-non-finishing
+						hleda neukoncujici stav zadaneho dobre specifikovaneho konecneho automatu.
+						Parametr nelze kombinovat s parametrem -m(resp. --minimalize)
+					-m, --minimize
+						provede minimalizaci dobre specifikovaneho konecneho automatu.
+						Parametr nelze kombinovat s parametrem -f(resp. --find-non-finishing)
+					-i, --case-insensitive
+						nebude bran ohled na velikost znaku pri porovnanani symbolu ci stavu, tj.
+						ve vystupu potom budou vsechna velka pismena prevedena na mala
+is_it_ok.sh: riadok 199: dos2unix: príkaz nenájdený
+diff: rozsireni.lf: Adresár alebo súbor neexistuje
+is_it_ok.sh: riadok 222: dos2unix: príkaz nenájdený

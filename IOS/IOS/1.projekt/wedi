@@ -1,0 +1,194 @@
+#!/bin/sh
+#WEDI_RC=log
+#EDITOR=vi	
+
+	if [ ! -f $WEDI_RC ]; then
+			touch $WEDI_RC 
+			# touch - sloužící ke změně atributů souboru
+	fi	
+
+	if [ -z $WEDI_RC ]; then
+			exit 1
+	fi	
+
+	if [ ! -f $WEDI_RC ]; then
+			exit 1
+	fi
+		
+	if [ -z $EDITOR ]; then 
+			EDITOR=$VISUAL
+
+			if [ -z $VISUAL ]; then
+					exit 1
+			fi
+
+			exit 1	
+
+	fi
+
+	if [ $# -eq 4 ]; then
+			echo !!!CHYBA , PREKROCENY POCET ZADANYCH ARGUMENTOV!!!
+			break
+	fi
+
+	funkciaChybaAdresa(){
+			ChybaAdresa=$( grep ":$find:" $WEDI_RC | cut -d ":" -f2 | uniq -d | cut -d " " -f2- )
+
+			if [ "$find" != "$ChybaAdresa" ]; then
+					echo !!!Chyba, v danom adresari nebol este editovan ziaden subor!!!
+					exit 1
+			fi
+			}
+
+	if [ -d "$1" ]; then
+			find="$1"
+			funkciaChybaAdresa "$find"
+			count2=$(grep -c $1 $WEDI_RC)
+
+			if [ "$count2" != "1" ]; then
+					last=$(grep -e $1 $WEDI_RC | cut -d " " -f 3- | uniq | tail -n 1 )
+					echo `date +"%Y-%m-%d"` :$1: $last >> $WEDI_RC
+
+					if [ ! -f $last ]; then
+							echo !!!Chyba , subor uz neexistuje !!!
+							break
+					fi
+
+					if [ -f $last ]; then
+							$EDITOR $last
+					fi
+			fi	
+
+			if [ "$count2" = "1" ]; then
+					last=$(grep -e $1 $WEDI_RC | cut -d " " -f 3- )
+					echo `date +"%Y-%m-%d"` :$1: $last >> $WEDI_RC
+
+					if [ ! -f $last ]; then
+							echo !!!Chyba , subor uz neexistuje !!!
+							break
+					fi
+
+					$EDITOR $last
+			fi	
+	fi
+
+	if [ -f "$1" ]; then
+			$EDITOR $1
+			echo `date +"%Y-%m-%d"` :`pwd`:  $1 >> $WEDI_RC
+			# readlink - vypíše na standardní výstup pouze cíl symbolického linku
+	fi
+
+	if [ "$#" = "0" ]; then
+			a=pwd  
+			# pwd - vypíše absolutní cestu do aktuálního adresáře 
+			# grep - vyhledává vzorky v obsahu souborů
+			count1=$(grep -c `pwd` $WEDI_RC)
+
+			if [ "$count1" != "1" ]; then
+					last=$(grep -e `pwd` $WEDI_RC | cut -d " " -f 3- | uniq | tail -n 1 )
+					echo `date +"%Y-%m-%d"` :`pwd`: $last >> $WEDI_RC
+
+					if [ ! -f $last ]; then
+							echo !!!Chyba , subor uz neexistuje !!!
+							break
+					fi
+
+					if [ -f $last ]; then				
+							$EDITOR $last
+					fi
+			fi	
+
+			if [ "$count1" = "1" ]; then
+					last=$(grep -e `pwd` $WEDI_RC | cut -d " " -f 3- )
+					echo `date +"%Y-%m-%d"` :`pwd`: $last >> $WEDI_RC
+
+					if [ ! -f $last ]; then
+							echo !!!Chyba , subor uz neexistuje !!!
+							break
+					fi
+
+					$EDITOR $last
+
+			fi
+	fi
+	
+	while getopts "l,m,a,b" arg; do
+  	case $arg in
+	#..........ARGUMENT -m..........
+    m)	
+			find="$2"
+			funkciaChybaAdresa "$find"
+
+			if [ ! -d "$2" ]; then
+					b=$(pwd)
+			else
+					b=$2
+	  		fi
+
+			ofen=$(sort $WEDI_RC | grep $b | uniq -c | sort -r | head -1|  xargs | cut -d "/" -f 3- | grep -o "[^/]*$" | cut -d ":" -f 2- )
+
+			if [ ! -f $ofen ]; then
+					echo !!!Chyba , subor uz neexistuje !!!
+					break
+			fi
+
+			$EDITOR $ofen
+			echo `date +"%Y-%m-%d"` :`pwd`: $ofen >> $WEDI_RC
+			# uniq - slouží k odstranění duplicitních hodnot 
+			# -c -vypíše před duplicitní hodnotu, kolikrát se v souboru nachází
+			# head - který zobrazí začátek souboru
+			# xargs -rozděluje předané informace do dostatečně malých příkazů
+			# cut - slouží k získání části textu z každého řádku na vstupu 
+			# -d - implicitně tabulátor
+      		;;
+    #..........ARGUMENT -l..........  		
+	l) 
+			find="$2"
+			funkciaChybaAdresa "$find"
+
+	  		if [ ! -d "$2" ]; then
+					b=$(pwd)
+			else
+					b=$2
+	  		fi 
+	  		test=$(cat $WEDI_RC | grep $b | cut -d " " -f 3-)
+	  		#echo $test
+	 		cat $WEDI_RC | grep $b | cut -d " " -f 3- 
+     	 	;;		
+    #..........ARGUMENT -a.......... 	 	
+    a)
+			find="$3"
+			funkciaChybaAdresa "$find"
+
+			if [ ! -d "$3" ]; then
+					b=$(pwd)
+			else
+					b=$3
+	  		fi
+
+	  		a="$2"
+	  		grep ":$b:" $WEDI_RC | grep $a | cut -d "/" -f 1- | grep -o "[^/]*$" | cut -d " " -f 2-
+	  		grep ":$b:" $WEDI_RC | sort -n | sed -e '1,/'$a'/d' | cut -d "/" -f 1- | grep -o "[^/]*$" | cut -d " " -f 2-
+      		;;
+    #..........ARGUMENT -b..........
+    b)	
+			find="$3"
+			funkciaChybaAdresa "$find"
+
+			if [ ! -d "$3" ]; then
+					b=$(pwd)
+			else
+					b=$3
+	  		fi
+
+	  		a="$2"
+			grep ":$b:" $WEDI_RC | sort -n | sed -e '/'$a'/,$d' | cut -d "/" -f 1- | grep -o "[^/]*$" | cut -d " " -f 2-
+			grep ":$b:" $WEDI_RC | grep $a | cut -d "/" -f 1- | grep -o "[^/]*$" | cut -d " " -f 2-
+      		;; 
+    #..........ARGUMENT chyba..........
+    \?)
+      		echo "!!!Chyba, nesprávne zadaný parameter!!!: $1" >&2
+      		exit 1
+      		;; 
+ 	esac
+	done

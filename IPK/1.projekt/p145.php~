@@ -1,0 +1,245 @@
+3362
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Permanent Redirect with HTTP 301</title>	<style type="text/css">
+	body { font-family: "Arial",sans-serif; line-height: 1.6; color: #333333; background-color: white; }
+	h1, h2, h3, h4, h5, h6 { line-height: 1.2; }
+	p { text-align: justify; }
+	p.description { font-weight: bold; }
+	div.flink a { padding: 0px 0.3ex 0px 0.3ex; line-height: 2; }
+	
+	@media screen {
+		#tagline { font-size: 0.8em; border-bottom: 1px solid gray; letter-spacing: 1px; }
+	
+		body { margin: 0; }
+		h1 { color: #434300; background-color: white; margin: 0px; padding: 0px; }
+		h2 { color: #004343; background-color: white; }
+		h3 { color: #430043; background-color: white; }
+		p.description:first-letter {
+			font-size: 2em; text-transform: uppercase; margin-top: -0.25em;
+			float: left; color: #993300; background-color: white; margin-right: 0.75ex;
+			font-family: "Monotype Corsiva",cursive; font-weight: bold; 
+		}
+		a.bc { letter-spacing: 0.15ex; }
+		
+		div.content {
+			max-width: 40em;
+			margin: 0px auto; 
+			border-left: 0.25em outset #CCCCCC;
+			border-right: 0.25em outset #CCCCCC;
+			padding: 0.1em 5% 1.5em 5%;
+			color: black;
+			background-color: white;
+		}
+	}
+	
+	@media print {
+		.noprint { display: none; visibility: hidden; }
+		a { color: black; background-color: white; }
+	}
+	</style>
+	<link rel="alternate" type="application/rss+xml" title="Somacon" href="p998.php"><style type="text/css">
+pre,code { color:black; background-color: #EAEAEA; }
+blockquote { background-color: #F9F4F0; color: black; }
+</style>
+</head>
+<body>
+<div class="content"><div class="noprint"><p id="tagline"><a href="http://www.somacon.com/">Somacon.com</a>: Articles on websites &amp; etc.</p><table border="0" cellpadding="0" cellspacing="0" width="728" style="margin-top:6px;table-layout: fixed;"><tr><td width="346"><script type="text/javascript"><!--
+google_ad_client = "ca-pub-2379876391548301";
+google_ad_slot = "6866827820";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></td><td valign="middle" style="padding:0.4em;text-align:justify;"></td></tr></table><div style="margin:4px;">&sect; <a class="bc" href="/">Home</a> &gt; <a class="bc" href="p385.php">Index</a> &gt; <a class="bc" href="p385.php?cat=Web+Development">Web Development</a>
+</div></div>
+<h1>Permanent Redirect with HTTP 301</h1>
+
+<p class="description">This article describes how to properly redirect a web page using an HTTP 301 status code and Location header.  The 301 status code is used to indicate that a page has permanently moved. Multiple techniques are presented with recommendations.</p>
+
+<p>In order to redirect an out-of-print web page to another location, return the HTTP 301 status code and a location header in the HTTP response of the deprecated web page.  The HTTP 301 response code will tell user-agents that the location has permanently moved.  This is particularly useful for search engines like Google, which will carry over page rank to the new page if this status code is seen.   If you do not need to indicate permanent displacement, you can accomplish redirection by setting a Location header in PHP or using Response.Redirect in ASP.  The <em>location</em> header does the actual redirection to the new location, and can be used by itself.</p>
+
+<p>HTTP headers are sent for every web page.  If you want to see what HTTP headers look like for a particular page, visit <a href="http://www.rexswain.com/httpview.html">Rex Swain's HTTP Viewer</a>. For advanced users, I would recommend you download the <a href="http://www.spreadfirefox.com/community/?q=affiliates&amp;id=3613&amp;t=51">Firefox</a> web browser and install Chris Pederick's <a href="http://www.chrispederick.com/work/firefox/webdeveloper/">Web Developer Extensions</a>.  Then, use the <em>Information->View Response Headers</em> function.  In scripts, HTTP headers must be sent before sending any page content, including white space, or else an error will result.
+
+
+<h2>HTTP 301 Redirect in ASP-VBScript</h2>
+
+<pre><code>&lt;%@ Language=VBScript %&gt;
+&lt;%
+' Permanent redirection
+Response.Status = "301 Moved Permanently"
+Response.AddHeader "Location", "http://www.somacon.com/"
+Response.End
+%&gt;</code></pre>
+
+<p>In Active Server Pages (ASP), <code>Response.Redirect</code> does not work the same as the code shown in the example.  <code>Response.Redirect</code> will set the location header as shown, but it will set the status code to <em>HTTP/1.1 302 Object moved</em> instead.  When you set the Location header with <code>Response.AddHeader</code>, the status code must be manually defined, otherwise it stays <em>200 OK</em>.
+
+<p>If you send any page content prior to the headers, you will get an error like, <em>&quot;Response object error 'ASP 0156 : 80004005'; Header Error; The HTTP headers are already written to the client browser. Any HTTP header modifications must be made before writing page content.&quot;</em>.  Normally, you do not see this error even if there is content prior to the redirect, because page buffering is enabled by default in IIS.  If you want to be sure there is no content being sent before the redirect, call <code>Response.Flush</code> just before it, disable page buffering with <code>Response.Buffer = False</code>, or configure IIS to disable page buffering. (Disabling buffering reduces performance.)
+
+<h2>HTTP 301 Redirect in PHP</h2>
+
+<pre><code>&lt;?php
+// Permanent redirection
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: http://www.somacon.com/");
+exit();
+?&gt;</code></pre>
+
+<p>If you set the Location header by itself, PHP automatically sets the status code to <em>HTTP/1.1 302 Found</em>.
+
+<p>Note, if you attempt to send headers after content has been sent, you will get a warning like, <em>&quot;Warning: Cannot modify header information - headers already sent by ...&quot;</em>.  Watch out for empty lines and spaces between PHP open and close tags.  ASP ignores these, but PHP does not.
+
+<h2>HTTP 301 Redirect in ColdFusion</h2>
+
+<pre><code>&lt;CFHEADER statuscode="301" statustext="Moved Permanently"&gt;
+&lt;CFHEADER name="Location" value="http://www.somacon.com/"&gt;</code></pre>
+
+<p>Do not use a <code>CFFLUSH</code> command before the above tags, or in <code>Application.cfm</code>. This Coldfusion code was provided by <a href="http://www.TollFreeForwarding.com/">Toll Free
+Forwarding.com</a>.
+
+<h2>HTTP 301 Redirect in Perl</h2>
+
+<pre><code>#!/usr/bin/perl      -w
+use strict;
+print "Status: 301 Moved Permanently\n";
+print "Location: http://somewhere/page.htm\n\n";
+exit;</code></pre>
+
+<p>As in PHP, if you do not supply the 301 code explicitly, Apache will send a &quot;302 Found&quot; status code. Note the subtle difference as compared to PHP.  This example prints a &quot;Status&quot; header rather than an HTTP status code line.   This is because you <em>can not</em> set the HTTP status code directly as you typically can in PHP.  If you do, the server will return a 500 Internal Server Error, and the error log will show:
+
+<pre>malformed header from script. Bad header=HTTP/1.1 301 Moved Permanently: /cgi/test.pl</pre>
+
+<p>The &quot;Status&quot; header is an alternative way of setting the HTTP status code.  This is not passed to the browser directly, but the web server (Apache) converts it into a suitable HTTP status code.  (The CGI specification does not allow directly setting the HTTP status code.  Perl typically runs as a CGI, whereas PHP does not. For more information, see this <a href="http://www.srcf.ucam.org/faq/cgi#php-header">PHP header FAQ</a> or the <a href="http://us2.php.net/manual/en/function.header.php">PHP header function</a> documentation.)
+
+<p>You must supply the carraige returns as specified above.  Two carriage returns (\n\n) are needed after the last header, since they signify the end of the HTTP header and the beginning of content.
+
+<p>As in PHP, it is good practice to exit the script explicitly, otherwise, the Perl script continues executing.  There should not be any <code>print "Content-type: text/html\n\n";</code> or other output before printing these headers, or the headers will be printed as part of the content visible in the browser.
+
+<h2>Redirection with mod_rewrite</h2>
+
+<p>The Apache module, <a href="http://httpd.apache.org/docs/trunk/mod/mod_rewrite.html">mod_rewrite</a>, is typically used to transform URLs from one form to another.  It can also be used for permanent redirection. The rewriting rules can be placed in httpd.conf (for server-wide rules), or in .htaccess files (for directory-specific rules). Consider the following example that is in the .htaccess file of this website:
+
+<pre><code>rewriteEngine on
+rewriteRule ^contact\.php$ http://www.somacon.com/p2.php [R=permanent,L]</code></pre>
+
+<p>The first line tells Apache to turn the mod_rewrite engine on.  The second line tells mod_rewrite to match requests where the URI is exactly <code>contact.php</code>.  The ^ and $ match the beginning and end of the expression, respectively, and the \ is used to escape the period, which otherwise would match any character.  After the match pattern is a space, and then the substitution.  In this case, I want the server to substitute <code>contact.php</code> with <code>http://www.somacon.com/p2.php</code>.
+
+<p>In brackets are the comma-separated rule flags.  The <code>R=permanent</code> flag tells Apache to issue a permanent redirect 301 response, with the location as the substituted URL.  The <code>L</code> flag tells mod_rewrite that no other subsequent rules should be processed.
+
+<p>Note that I specified the full destination URL in the substitution, because otherwise mod_rewrite uses the short form of my hostname <code>somacon.com</code>. To avoid Google indexing issues, I've redirected all non-www traffic to the www prefixed host.  I also redirect the default, index pages to the root directory.  The rules to achieve this are as follows:
+
+<pre><code># redirect all non-www traffic
+RewriteCond %{HTTP_HOST} ^somacon\.com$
+RewriteRule ^.*$ http://www.somacon.com%{REQUEST_URI} [R=permanent,L]
+
+# Redirect aliases of home page to the root website
+rewriteRule ^index\.(php|html|htm) http://www.somacon.com/ [R=permanent,L]</code></pre>
+
+<p>I leave it up to the reader to understand this example by reading the mod_rewrite documentation.  The mod_rewrite module offers a very powerful and effective way to perform redirection.  It is preferable to use mod_rewrite over a server-side script.  The drawback is the steep learning curve, requiring you to learn both its syntax and the syntax of regular expressions.
+
+<h2>Redirection with Javascript or META tags</h2>
+
+<p>If you don't have server-side scripting or mod_rewrite on your web server, you can still do redirection, but not as elegantly.  The Javascript/META method will redirect after both the headers and the page have loaded.  By contrast, the <em>HTTP header</em> method described above redirects immediately after the headers have loaded.  While both methods require two requests to the web server, the Javascript/META method causes the user's browser to flicker or refresh as the old page is loading.  Redirection with HTTP headers is seamless, and saves time.
+
+<p>You can not send a 301 status code via Javascript or META tags. Since the HTTP status code of the page will remain <em>200 OK</em>, most search engines will continue to think the location is valid.  Any page rank of the old location will not be transferred to the new location.
+
+<p>Another disadvantage is that some browsers disable Javascript or META refresh.  Therefore, one must include a link to the destination page in the body of the page.  One can also add a delay between when the page is displayed, and when it redirects.  However, I would strongly discourage this and will not even describe it here.  
+
+<p>Unfortunately, it is very common to see delayed META/Javascript refresh used when a site or page has moved.  The page typically shows a message saying, &quot;This site has moved to ...  Your browser will be automatically forwarded in X seconds. Click here if your browser does not automatically forward you.&quot;  Some website, particularly government and legal websites, add such an intermediate page whenever you click a link to an external site.
+
+<p>Not only is this search-engine unfriendly, but it has the additional drawback of wasting the visitor's precious time while they read wholly unneccessary information and wait for the redirect.  The first rule of web design (and writing) is to treat your reader's time with respect.  All visitors except the most novice can tell when they are leaving your site for another, and that your site has no authority over the external site, so there is no need to waste everyone else&#39;s time.
+
+<p>
+1822
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-2379876391548301";
+google_ad_slot = "6866827820";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<h3>Redirection with Javascript</h3>
+
+<pre><code>&lt;html&gt;
+&lt;head&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+window.location.href='http://www.somacon.com/';
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+This page has moved to &lt;a href=&quot;http://somacon.com/&quot;&gt;http://somacon.com/&lt;/a&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>Note that they syntax <code>document.location='';</code> has been deprecated.  Use the above code, or alternately, <code>document.URL='';</code>.
+
+<h3>Redirection with META Refresh</h3>
+
+<pre><code>&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv=&quot;refresh&quot; content=&quot;0;url=http://www.somacon.com/&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+This page has moved to &lt;a href=&quot;http://somacon.com/&quot;&gt;http://somacon.com/&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>As I&#39;ve pointed out, the META refresh tag should be avoided as a method of redirection.  There are other times when it is more useful.  A common situation is on a page where information is constantly changing, like news or stock tickers. For example, most major news websites include META refresh tags in their home pages.  CNN sets the refresh interval to 1800 seconds, while Google sets it to 900 and Yahoo, to 300. If the user switches to another application for awhile, when they return, they are presented with the most up to date information.
+
+<p>Another situation is in the status page for the execution of a long-running server-side task.  A good site design principle is that every web page load within a fraction of a second.  For longer tasks, queue and run them on the server, and simply show a status page via the web.  The three states of the status page would be <em>queued</em>, <em>running</em>, and <em>completed</em>.  The refresh tag would be printed in the <em>queued</em> and <em>running</em> states, with an appropriate refresh interval like 15 or 30 seconds.  You should always put a link to manually refresh the status page, in case the user disabled this META tag in their browser.
+
+<h2>Redirection Live Example</h2>
+
+<p>If you try to go to this page:
+<br><a href="http://www.somacon.com/color/html_css_table_border_styles.php">http://www.somacon.com/color/html_css_table_border_styles.php</a>
+<br>You will automatically be redirected to this page via mod_rewrite:
+<br><a href="http://www.somacon.com/p141.php">http://www.somacon.com/p141.php</a>
+<br>The actual HTTP headers for the old page are shown below. The headers were captured using the freeware utility, <a href="http://www.freewarefiles.com/HttpSpy_program_19706.html">HTTPSpy</a>.
+
+<pre>HTTP/1.1 301 Moved Permanently
+Date: Thu, 07 Apr 2005 18:52:27 GMT
+Server: Apache/1.3.33 (Debian GNU/Linux) mod_throttle/3.1.2 mod_ssl/2.8.22 OpenSSL/0.9.7d
+Location: http://www.somacon.com/p141.php
+Keep-Alive: timeout=15, max=100
+Proxy-Connection: Keep-Alive
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=iso-8859-1
+Via: 1.1 HttpSpy</pre>
+
+
+<p><script type="text/javascript"><!--
+google_ad_client = "ca-pub-2379876391548301";
+google_ad_slot = "6866827820";
+google_ad_width = 336;
+google_ad_height = 280;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<h2>HTTP/1.1 301 Status Code Definition</h2>
+
+<p>From the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">HTTP/1.1 Status Code Definitions</a> section of the <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">Hypertext Transfer Protocol -- HTTP/1.1</a> RFC 2616, Fielding, et al.  See the RFC for all the possible redirection status codes, which include 300-Multiple Choices, 301-Moved Permanently, 302-Found, 303-See Other, 304-Not Modified, 305-Use Proxy, and 307-Temporary Redirect.  Using the appropriate status code is worthwhile for public websites, but you can probably leave it unspecified when redirecting in a private or intranet application.
+
+<blockquote>
+<p>The requested resource has been assigned a new permanent URI and any future references to this resource SHOULD use one of the returned URIs. Clients with link editing capabilities ought to automatically re-link references to the Request-URI to one or more of the new references returned by the server, where possible. This response is cacheable unless indicated otherwise.
+
+<p>The new permanent URI SHOULD be given by the Location field in the response. Unless the request method was HEAD, the entity of the response SHOULD contain a short hypertext note with a hyperlink to the new URI(s).
+
+<p>If the 301 status code is received in response to a request other than GET or HEAD, the user agent MUST NOT automatically redirect the request unless it can be confirmed by the user, since this might change the conditions under which the request was issued.
+
+<p>Note: When automatically redirecting a POST request after
+      receiving a 301 status code, some existing HTTP/1.0 user agents
+      will erroneously change it into a GET request.
+</blockquote>
+
+
+<hr noshade style="margin-top:0.3em;margin-bottom:0.4em;"><div class="noprint flink"><a href="/" rel="nofollow">Home</a> &middot; <a href="p2.php?subject=Permanent+Redirect+with+HTTP+301" rel="nofollow">Contact</a> &middot; <a href="p378.php" rel="nofollow">Search</a> &middot; <a href="javascript:window.print();" rel="nofollow">Print</a> &middot; <a rel="nofollow" href="https://twitter.com/share?original_referer=http%3A%2F%2Fwww.somacon.com%2Fp145.php&amp;source=tweetbutton&amp;text=Permanent+Redirect+with+HTTP+301&amp;url=http%3A%2F%2Fwww.somacon.com%2Fp145.php">Tweet</a></div><div style="margin-top:0.3em;"><small><i>Created 2005-04-07, Last Modified 2013-07-18, &copy; Shailesh N. Humbad</i><br>Disclaimer: This content is provided as-is. The information may be incorrect.</small></div></div></body></html>
+0
+

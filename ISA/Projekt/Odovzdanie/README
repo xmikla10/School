@@ -1,0 +1,53 @@
+==========================================================================================
+Názov:
+  FTP CLIENT
+
+==========================================================================================
+Autor:
+  Peter Miklánek, xmikla10
+
+==========================================================================================
+Popis:
+  Program fclient funguje v aktívnom aj pasívnom režime a v týchto dvoch režimoch
+  umožňuje nahrať na server daný súbor, súbor zo serveru stiahnuť alebo súbor zmazať.
+  Program vypisuje taktiež informácie o adresárovej štruktúre.
+
+==========================================================================================
+Rozšírenia:
+  Rozšírenia sú 3:
+  1. možnosť vytvoriť priešinok pomocou -md MenoPriecinku
+  2. možnosť vymazať priešinok pomocou -rd MenoPriecinku
+  3. výpis súborov aktuálneho adresára pomocou -nl
+
+==========================================================================================
+Príklady spustenia:
+  ./fclient -s 192.168.1.102 -c credentials.txt -p
+  - pragram vypíše adresárovú štruktúru na servery -s v pasívnom móde
+
+  ./fclient -s 192.168.1.102 -c credentials.txt -a 1050 -d file.txt
+  -program stiahne file.txt zo serveru -s v aktívnom móde
+
+  ./fclient -s 192.168.1.102 -c credentials.txt -p -u file.txt -P /upload
+  -program nahrá file.txt na server -s v pasívnom móde do priečinku /upload
+
+  ./fclient -s 192.168.1.102 -c credentials.txt -r file.txt
+  -program vymaže súbor file.txt zo serveru -s v aktívnom móde
+  (v prípade, že neni zadaný -a ani -p, program si zvolí aktívny mód)
+
+  ./fclient -s 192.168.1.102 -c credentials.txt -md Directory1 -p
+  -program vytvorí priečinok Directory1 na servery -s v pasívnom móde
+
+  ./fclient -s 192.168.1.102 -c credentials.txt -rd Directory1 -a 1050
+  -program vymaže priečinok Directory1 na servery -s v aktívnom móde
+
+  ./fclient -s 192.168.1.102 -c credentials.txt -nl -p
+  - pragram vypíše adresárovú štruktúru aktuálneho adresára na servery -s v pasívnom móde
+  (výpis NLST je oproti LIST odlišný)
+
+==========================================================================================
+Zoznam odovzdaných súborov:
+  1. fclient.cpp
+  2. fclient.h
+  3. Makefile
+  4. README
+  5. manual.pdf
