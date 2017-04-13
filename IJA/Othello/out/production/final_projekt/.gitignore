@@ -1,0 +1,9 @@
+*.zip
+/Othello.iml
+/build.xml
+/distrib.sh
+/final_projekt.iml
+/homework2.properties
+/homework2.xml
+*.xml~
+/result.txt
